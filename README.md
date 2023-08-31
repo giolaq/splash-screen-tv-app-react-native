@@ -17,7 +17,7 @@ cd ./splash-screen-tv-app-react-native
 4. Run the demo app with
 ```sh
 npm start
-``
+```
 
 
 
