@@ -21,6 +21,9 @@ npm start
 
 
 
+https://github.com/giolaq/splash-screen-tv-app-react-native/assets/2865799/726f0f79-b3e1-4a6a-9226-a442380f4e22
+
+
 ### Stay updated
 Get the most up to date Amazon Appstore developer news, product releases, tutorials, and more:
 
