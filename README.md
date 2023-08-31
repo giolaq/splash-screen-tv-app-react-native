@@ -1,79 +1,116 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Lottie Animation on Splash Screen sample app for Fire TV in React Native
 
-# Getting Started
+This project is a React Native app showcasing how to develop a Splash Screen with a Lottie animation for Fire TV apps. Follow the guide and check this repository to develop your custom splash screen.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+**Note:** Fire OS is based on the [Android Open Source project version 11](https://source.android.com/docs/setup/about/android-11-release) so you should not use Android 12's new SplashScreen APIs as described in [the Android v12 docs](https://developer.android.com/develop/ui/views/launch/splash-screen).
 
-## Step 1: Start the Metro Server
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## 💻 Building the Lottie Animation Splash Screen TV demo
 
-To start Metro, run the following command from the _root_ of your React Native project:
-
-```bash
-# using npm
+1. Clone the demo app repository:
+`git clone git@github.com:giolaq/splash-screen-tv-app-react-native`
+2. Connect your Fire TV device following these [instructions](https://developer.amazon.com/docs/fire-tv/connecting-adb-to-device.html) or [start an Android TV Emulator](https://developer.android.com/training/tv/start/start#run-on-a-virtual-device)
+3. Go inside the directory of the demo app
+```sh
+cd ./splash-screen-tv-app-react-native
+```
+4. Run the demo app with
+```sh
 npm start
+``
 
-# OR using Yarn
-yarn start
+## How to develop a custom splash screen for your Fire TV Apps
+
+**Step 1:** Create your custom splash screen
+
+Create a file named `splashscreen.xml` in the drawable directory. This file will contain all the graphic elements and layers of your splash screen, such as the background color and the main graphic. This file should have the following markup:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white"/>
+        </shape>
+    </item>
+
+    <item android:drawable="@drawable/splashscreen_logo" android:gravity="center"/>
+
+</layer-list>
 ```
 
-## Step 2: Start your Application
+*Note:* The SVG (Scalable Vector Graphics) image format load faster compared to other image formats when testing on FireTV devices.
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+**Step 2:** Create the splash screen theme
 
-### For Android
+Define a new style in the file styles.xml of your project then add an android:windowBackground item set as the @drawable/splashscreen splash screen you created in the prior step:
 
-```bash
-# using npm
-npm run android
-
-# OR using Yarn
-yarn android
+ ```xml
+    <style name="SplashScreenTheme" parent="Theme.SplashScreenTV.NoActionBar">
+        <item name="android:windowBackground">@drawable/splashscreen</item>
+    </style>
 ```
 
-### For iOS
+**Step 3:** Create the splash screen activity
 
-```bash
-# using npm
-npm run ios
+Create a new activity responsible for displaying the splash screen, launch the main activity, then terminate:
 
-# OR using Yarn
-yarn ios
+```kotlin
+class SplashScreenActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+}
+```
+**Step 4:** Apply the splash screen theme to the splash screen activity
+
+In `AndroidManifest.xml`, set the theme attribute of the `SplashScreenActivity` to the theme you setup in step 2. The `SplashScreenActivity` will be the first activity called by the launcher, so remember to move the intent filter with the action `android.intent.action.MAIN` and category `android.intent.category.LEANBACK_LAUNCHER` from the Main Activity to the `SplashScreenActivity`:
+
+```xml
+<activity
+    android:name=".SplashScreenActivity"
+    android:exported="true"
+    android:label="@string/title_activity_splash_screen"
+    android:theme="@style/SplashScreenTheme">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+
+        <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+    </intent-filter>
+</activity>
 ```
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+## Success: Your custom splash screen is now complete!
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+You have now implemented a custom splash screen and optimized the starting time of your Fire TV app displaying your branding image. To test this for yourself, use the Android Debug Bridge and follow [our docs on installing your app on Fire TV](https://developer.amazon.com/docs/fire-tv/installing-and-running-your-app.html).
 
-## Step 3: Modifying your App
+![splash screen at cold start](images/splashscreen.gif)
 
-Now that you have successfully run the app, let's modify it.
+## Get support
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+If you found a bug or want to suggest a new [feature/use case/sample], please [file an issue](../../issues).
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+If you have questions, comments, or need help with code, we're here to help:
+- on Twitter at [@AmazonAppDev](https://twitter.com/AmazonAppDev)
+- on Stack Overflow at the [amazon-appstore](https://stackoverflow.com/questions/tagged/amazon-appstore) tag
 
-## Congratulations! :tada:
 
-You've successfully run and modified your React Native App. :partying_face:
+### Stay updated
+Get the most up to date Amazon Appstore developer news, product releases, tutorials, and more:
 
-### Now what?
+* 📣 Follow [@AmazonAppDev](https://twitter.com/AmazonAppDev) and [our team](https://twitter.com/i/lists/1580293569897984000) on [Twitter](https://twitter.com/AmazonAppDev)
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+* 📺 Subscribe to our [Youtube channel](https://www.youtube.com/amazonappstoredevelopers)
 
-# Troubleshooting
+* 📧 Sign up for the [Developer Newsletter](https://m.amazonappservices.com/devto-newsletter-subscribe)
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
-# Learn More
 
-To learn more about React Native, take a look at the following resources:
+## Authors
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- [@giolaq](https://twitter.com/giolaq)
+- [@chris_trag](https://twitter.com/chris_trag)
